@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sumit Das | YouTube Thumbnail Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F4F6FB; --ink:#15132B; --muted:#5A5873; --line:#DDE0EC;
+  --yellow:#FFD21F; --red:#FF3B30; --blue:#2F54FF; --white:#fff;
+  --display:"Archivo","Arial Black",Impact,sans-serif;
+  --body:"DM Sans",system-ui,-apple-system,Segoe UI,sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.wrap{max-width:1160px;margin:0 auto;padding:0 22px}
+h1,h2,h3{font-family:var(--display);font-stretch:75%;font-weight:900;line-height:.98;letter-spacing:-.01em}
+h1{font-size:clamp(46px,8.4vw,104px)}
+h2{font-size:clamp(34px,5vw,58px);margin-bottom:12px}
+h3{font-size:24px;font-stretch:90%}
+p.lead{font-size:19px;color:var(--muted);max-width:52ch}
+
+/* nav */
+nav{display:flex;justify-content:space-between;align-items:center;padding:20px 0}
+.logo{font-family:var(--display);font-stretch:75%;font-weight:900;font-size:22px;text-decoration:none}
+.logo span{background:var(--yellow);padding:0 6px;border-radius:4px}
+.btn{display:inline-block;background:var(--ink);color:var(--white);font-weight:700;text-decoration:none;padding:13px 22px;border-radius:999px;border:0;cursor:pointer;font:700 16px var(--body);transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn.yellow{background:var(--yellow);color:var(--ink)}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
+
+/* hero */
+.hero{padding:34px 0 70px}
+.hero p.lead{margin:22px 0 28px}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap}
+mark{background:var(--yellow);color:inherit;padding:0 .12em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+
+/* feed mockup */
+.feed{margin-top:52px;background:var(--white);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 30px 60px -30px rgba(21,19,43,.35)}
+.feed-bar{display:flex;gap:10px;align-items:center;margin-bottom:16px;color:var(--muted);font-size:14px}
+.feed-bar i{width:11px;height:11px;border-radius:50%;background:var(--line);display:inline-block}
+.feed-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.vid .title{font-weight:700;font-size:15px;line-height:1.3;margin-top:10px}
+.vid .chan{font-size:13px;color:var(--muted)}
+.vid .row{display:flex;gap:10px}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--line);flex:none;margin-top:10px}
+.vid .title{margin-top:10px}
+
+/* slot (thumbnail frame) */
+.slot{position:relative;display:block;width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:repeating-linear-gradient(135deg,#E8EBF7 0 14px,#EEF0FA 14px 28px);cursor:pointer;border:0;padding:0}
+.slot img{width:100%;height:100%;object-fit:cover;display:block}
+.slot .empty{position:absolute;inset:0;display:grid;place-content:center;text-align:center;color:var(--muted);font-size:13px;font-weight:700;gap:4px}
+.slot .empty b{font-family:var(--display);font-stretch:75%;font-size:20px;color:var(--ink)}
+.slot.filled .empty{display:none}
+.slot .time{position:absolute;right:6px;bottom:6px;background:rgba(0,0,0,.8);color:#fff;font-size:12px;font-weight:700;padding:1px 5px;border-radius:4px}
+.slot .tag{position:absolute;left:8px;top:8px;background:var(--yellow);color:var(--ink);font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px}
+
+/* sections */
+section{padding:76px 0}
+.head{margin-bottom:34px}
+
+/* filters */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.chip{font:700 15px var(--body);padding:9px 18px;border-radius:999px;border:2px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:#fff}
+.work-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.work-grid figure.hide{display:none}
+figcaption{font-size:14px;color:var(--muted);margin-top:8px}
+
+/* before after */
+.ba{background:var(--ink);color:#fff;border-radius:28px;padding:56px 0}
+.ba .wrap{padding:0 40px}
+.ba p.lead{color:#B9B7D4}
+.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:30px}
+.ba .slot{background:repeating-linear-gradient(135deg,#26234A 0 14px,#2D2A55 14px 28px)}
+.ba .slot .empty,.ba .slot .empty b{color:#B9B7D4}
+.ba .slot .empty b{color:#fff}
+.ba .label{display:inline-block;font-weight:700;font-size:14px;padding:3px 12px;border-radius:999px;margin-bottom:10px}
+.ba .before .label{background:#3a3768;color:#fff}
+.ba .after .label{background:var(--yellow);color:var(--ink)}
+.ba .note{font-size:15px;color:#B9B7D4;margin-top:10px}
+
+/* process */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;counter-reset:s}
+.step{border-top:4px solid var(--ink);padding-top:14px}
+.step:nth-child(1){border-color:var(--yellow)}.step:nth-child(2){border-color:var(--blue)}.step:nth-child(3){border-color:var(--red)}.step:nth-child(4){border-color:var(--ink)}
+.step b{font-family:var(--display);font-stretch:75%;font-size:26px;display:block;margin-bottom:6px}
+.step p{color:var(--muted);font-size:16px}
+
+/* pricing */
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:stretch}
+.plan{background:var(--white);border:2px solid var(--line);border-radius:20px;padding:28px;display:flex;flex-direction:column}
+.plan.best{border-color:var(--ink);background:var(--yellow)}
+.plan .amt{font-family:var(--display);font-stretch:75%;font-weight:900;font-size:56px;line-height:1;margin:14px 0 4px}
+.plan .per{font-size:15px;color:var(--muted)}
+.plan.best .per{color:var(--ink)}
+.plan ul{list-style:none;padding:0;margin:20px 0 26px;display:grid;gap:8px;font-size:16px}
+.plan li::before{content:"\2713";font-weight:900;margin-right:10px}
+.plan .btn{margin-top:auto;text-align:center}
+.fine{margin-top:18px;color:var(--muted);font-size:15px}
+
+/* about + contact */
+.about{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+.about .list{display:grid;gap:10px}
+.about .list div{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-weight:500}
+.contact{background:var(--yellow);border-radius:28px;padding:60px 40px;text-align:center}
+.contact h2{margin-bottom:10px}
+.contact p{max-width:44ch;margin:0 auto 26px;font-size:19px}
+.contact .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+footer{padding:34px 0 50px;color:var(--muted);font-size:14px;text-align:center}
+
+
+/* order modal */
+dialog.order{border:0;border-radius:22px;padding:0;width:min(560px,94vw);max-height:92vh;background:var(--white);color:var(--ink);box-shadow:0 40px 90px -20px rgba(21,19,43,.5)}
+dialog.order::backdrop{background:rgba(21,19,43,.6)}
+.order-in{padding:30px;overflow:auto;max-height:92vh}
+.order-top{display:flex;justify-content:space-between;align-items:start;gap:12px;margin-bottom:6px}
+.order h2{font-size:34px;margin:0}
+.order .sub{color:var(--muted);font-size:16px;margin-bottom:20px}
+.x{background:var(--paper);border:0;width:38px;height:38px;border-radius:50%;font-size:22px;cursor:pointer;color:var(--ink);flex:none}
+.f{display:grid;gap:6px;margin-bottom:14px}
+.f label{font-weight:700;font-size:14px}
+.f input,.f select,.f textarea{font:400 16px var(--body);padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);width:100%}
+.f input:focus,.f select:focus,.f textarea:focus{outline:none;border-color:var(--blue);background:#fff}
+.f textarea{min-height:110px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.status{margin-top:12px;font-weight:700;font-size:15px;min-height:22px}
+.status.err{color:#C4231A}
+.done{text-align:center;padding:34px 10px}
+.done h2{margin-bottom:10px}
+.done p{color:var(--muted);margin-bottom:22px}
+@media (max-width:600px){.two{grid-template-columns:1fr}.order-in{padding:22px}}
+
+@media (max-width:860px){
+  .feed-grid,.work-grid,.price-grid{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:1fr 1fr}
+  .about{grid-template-columns:1fr}
+}
+@media (max-width:600px){
+  .feed-grid,.work-grid,.price-grid,.ba-grid,.steps{grid-template-columns:1fr}
+  .ba .wrap{padding:0 22px}
+  .contact{padding:44px 22px}
+  section{padding:56px 0}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <nav>
+    <a class="logo" href="#top"><span>SD</span> Sumit Das</a>
+    <button class="btn yellow" data-order>Get a thumbnail</button>
+  </nav>
+</header>
+
+<main id="top">
+
+<!-- HERO -->
+<div class="wrap hero">
+  <h1>Thumbnails that make people <mark>click</mark>.</h1>
+  <p class="lead">I design YouTube thumbnails for Indian tech, AI and challenge channels. Bold, readable on a phone, and ready in 24 to 48 hours.</p>
+  <div class="cta">
+    <a class="btn" href="#work">See my work</a>
+    <a class="btn ghost" href="#pricing">Pricing</a>
+  </div>
+
+  <div class="feed" aria-label="Example of thumbnails inside a YouTube feed">
+    <div class="feed-bar"><i></i><i></i><i></i><span>How your thumbnails look in the feed</span></div>
+    <div class="feed-grid">
+      <div class="vid"><div class="slot" data-slot="hero1" data-label="Tech"><span class="time">12:45</span></div>
+        <div class="row"><div class="avatar"></div><div><div class="title">Your video title goes here</div><div class="chan">Your channel</div></div></div></div>
+      <div class="vid"><div class="slot" data-slot="hero2" data-label="AI"><span class="time">8:20</span></div>
+        <div class="row"><div class="avatar"></div><div><div class="title">Your video title goes here</div><div class="chan">Your channel</div></div></div></div>
+      <div class="vid"><div class="slot" data-slot="hero3" data-label="Challenge"><span class="time">15:02</span></div>
+        <div class="row"><div class="avatar"></div><div><div class="title">Your video title goes here</div><div class="chan">Your channel</div></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- WORK -->
+<section id="work">
+  <div class="wrap">
+    <div class="head">
+      <h2>Recent work</h2>
+      <p class="lead">Concept thumbnails for tech, AI and challenge videos. Each one is built around a single focal point and 3 to 4 words of text.</p>
+    </div>
+    <div class="filters" role="group" aria-label="Filter by category">
+      <button class="chip" data-f="all" aria-pressed="true">All</button>
+      <button class="chip" data-f="tech" aria-pressed="false">Tech</button>
+      <button class="chip" data-f="ai" aria-pressed="false">AI</button>
+      <button class="chip" data-f="challenge" aria-pressed="false">Challenge</button>
+    </div>
+    <div class="work-grid" id="grid"></div>
+  </div>
+</section>
+
+<!-- BEFORE / AFTER -->
+<section>
+  <div class="wrap">
+    <div class="ba"><div class="wrap">
+      <h2>Before and after</h2>
+      <p class="lead">Same video, same topic. What changed: a clearer subject, bigger contrast, shorter text.</p>
+      <div class="ba-grid">
+        <div class="before"><span class="label">Before</span><div class="slot" data-slot="before1" data-label="Original"></div></div>
+        <div class="after"><span class="label">After</span><div class="slot" data-slot="after1" data-label="My redesign"></div></div>
+      </div>
+      <p class="note">Redesigns are concept work and are labelled as such.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section>
+  <div class="wrap">
+    <div class="head"><h2>How it works</h2></div>
+    <div class="steps">
+      <div class="step"><b>1. Send the brief</b><p>Video title, a short idea of the topic, and your face photos or screenshots.</p></div>
+      <div class="step"><b>2. Get concepts</b><p>I send 2 to 3 different directions so you can pick what fits your channel.</p></div>
+      <div class="step"><b>3. Revise</b><p>Two free rounds of changes on the one you choose.</p></div>
+      <div class="step"><b>4. Download</b><p>Final 1280 x 720 file, ready to upload.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="wrap">
+    <div class="head">
+      <h2>Simple pricing</h2>
+      <p class="lead">Every plan includes 2 revisions and delivery in 24 to 48 hours.</p>
+    </div>
+    <div class="price-grid">
+      <div class="plan">
+        <h3>Single</h3>
+        <div class="amt">&#8377;500</div><div class="per">per thumbnail</div>
+        <ul><li>1 thumbnail</li><li>2 concepts to choose from</li><li>2 revisions</li></ul>
+        <button class="btn ghost" data-order data-plan="Single - Rs 500">Order one</button>
+      </div>
+      <div class="plan best">
+        <h3>Weekly pack</h3>
+        <div class="amt">&#8377;1,800</div><div class="per">4 thumbnails, &#8377;450 each</div>
+        <ul><li>4 thumbnails</li><li>2 concepts each</li><li>2 revisions each</li><li>Priority delivery</li></ul>
+        <button class="btn" data-order data-plan="Weekly pack - Rs 1,800">Start weekly</button>
+      </div>
+      <div class="plan">
+        <h3>Monthly pack</h3>
+        <div class="amt">&#8377;3,200</div><div class="per">8 thumbnails, &#8377;400 each</div>
+        <ul><li>8 thumbnails</li><li>2 concepts each</li><li>2 revisions each</li><li>Consistent channel style</li></ul>
+        <button class="btn ghost" data-order data-plan="Monthly pack - Rs 3,200">Start monthly</button>
+      </div>
+    </div>
+    <p class="fine">Not sure which one fits? Message me your channel link and I will suggest a plan.</p>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section>
+  <div class="wrap about">
+    <div>
+      <h2>Hi, I'm Sumit.</h2>
+      <p class="lead">I make thumbnails for Indian YouTubers in tech, AI and challenge videos. I use AI tools to speed up ideas and backgrounds, then finish every thumbnail by hand with clean cutouts, real text and colour correction, so it never looks auto-generated.</p>
+    </div>
+    <div class="list">
+      <div>Tech, AI and challenge channels</div>
+      <div>Hindi and English text</div>
+      <div>Readable on a phone screen</div>
+      <div>Fast replies, clear delivery times</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="wrap">
+    <div class="contact">
+      <h2>Need a thumbnail for your next video?</h2>
+      <p>Fill in a short form. It lands straight in my inbox and I reply with a quick idea for your thumbnail.</p>
+      <div class="cta">
+        <button class="btn" data-order>Order a thumbnail</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer>&copy; <span id="yr"></span> Sumit Das</footer>
+
+
+<dialog class="order" id="orderDlg" aria-labelledby="orderTitle">
+  <div class="order-in">
+    <div id="orderForm">
+      <div class="order-top">
+        <h2 id="orderTitle">Order a thumbnail</h2>
+        <button class="x" type="button" data-close aria-label="Close">&times;</button>
+      </div>
+      <p class="sub">Tell me about your video. I will reply within 24 hours.</p>
+      <form id="oForm" novalidate>
+        <div class="two">
+          <div class="f"><label for="o-name">Your name</label><input id="o-name" name="name" required maxlength="80" autocomplete="name"></div>
+          <div class="f"><label for="o-email">Email</label><input id="o-email" name="email" type="email" required maxlength="120" autocomplete="email"></div>
+        </div>
+        <div class="two">
+          <div class="f"><label for="o-wa">WhatsApp (optional)</label><input id="o-wa" name="whatsapp" maxlength="30" inputmode="tel" autocomplete="tel"></div>
+          <div class="f"><label for="o-channel">Channel link</label><input id="o-channel" name="channel" required maxlength="200" placeholder="youtube.com/@yourchannel"></div>
+        </div>
+        <div class="two">
+          <div class="f"><label for="o-cat">Video type</label>
+            <select id="o-cat" name="category"><option>Tech</option><option>AI</option><option>Challenge</option><option>Other</option></select></div>
+          <div class="f"><label for="o-plan">Plan</label>
+            <select id="o-plan" name="plan">
+              <option>Single - Rs 500</option><option>Weekly pack - Rs 1,800</option><option>Monthly pack - Rs 3,200</option><option>Not sure yet</option>
+            </select></div>
+        </div>
+        <div class="f"><label for="o-title">Video title (optional)</label><input id="o-title" name="title" maxlength="150"></div>
+        <div class="f"><label for="o-details">What is the video about?</label>
+          <textarea id="o-details" name="details" required maxlength="2000" placeholder="Topic, style you like, any text you want on the thumbnail, link to reference thumbnails..."></textarea></div>
+        <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
+        <button class="btn" type="submit" id="oSend">Send order</button>
+        <div class="status" id="oStatus" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+    <div class="done" id="orderDone" hidden>
+      <h2>Order sent</h2>
+      <p>Thanks! I got your details and will email you within 24 hours.</p>
+      <button class="btn yellow" type="button" data-close>Close</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+/* ============ EDIT THIS PART ============ */
+/* To show a real thumbnail, put the image file in a "thumbs" folder next to this page
+   and write its path here. Leave "" to keep the placeholder. */
+const IMAGES = {
+  hero1: "", hero2: "", hero3: "",
+  before1: "", after1: "",
+  w1: "", w2: "", w3: "", w4: "", w5: "", w6: "", w7: "", w8: "", w9: ""
+  // example: w1: "thumbs/iphone-review.jpg"
+};
+
+const WORK = [
+  ["w1","tech","Tech review"],["w2","ai","AI tool"],["w3","challenge","Challenge"],
+  ["w4","tech","Tech comparison"],["w5","ai","AI news"],["w6","challenge","24-hour challenge"],
+  ["w7","tech","Unboxing"],["w8","ai","AI vs human"],["w9","challenge","Budget challenge"]
+];
+/* ========================================= */
+
+document.getElementById("yr").textContent = new Date().getFullYear();
+
+/* build work grid */
+const grid = document.getElementById("grid");
+WORK.forEach(([id, cat, label]) => {
+  const fig = document.createElement("figure");
+  fig.dataset.cat = cat;
+  fig.innerHTML = '<div class="slot" data-slot="' + id + '" data-label="' + label + '"></div><figcaption>' + label + '</figcaption>';
+  grid.appendChild(fig);
+});
+
+/* fill slots */
+function setImage(slot, src, alt){
+  const old = slot.querySelector("img"); if (old) old.remove();
+  const img = new Image(); img.src = src; img.alt = alt; img.loading = "lazy";
+  slot.prepend(img); slot.classList.add("filled");
+}
+document.querySelectorAll(".slot").forEach(slot => {
+  const id = slot.dataset.slot, label = slot.dataset.label || "Thumbnail";
+  const empty = document.createElement("div");
+  empty.className = "empty";
+  empty.innerHTML = "<b>" + label + "</b><span>Click to preview your image</span>";
+  slot.appendChild(empty);
+  slot.setAttribute("role","button"); slot.tabIndex = 0;
+  slot.setAttribute("aria-label", label + " thumbnail");
+  if (IMAGES[id]) setImage(slot, IMAGES[id], label + " thumbnail design by Sumit Das");
+  const pick = () => {
+    const inp = document.createElement("input"); inp.type = "file"; inp.accept = "image/*";
+    inp.onchange = () => { if (inp.files[0]) setImage(slot, URL.createObjectURL(inp.files[0]), label); };
+    inp.click();
+  };
+  slot.addEventListener("click", pick);
+  slot.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); pick(); }});
+});
+
+/* filters */
+document.querySelectorAll(".chip").forEach(chip => chip.addEventListener("click", () => {
+  document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c === chip));
+  const f = chip.dataset.f;
+  grid.querySelectorAll("figure").forEach(fig => fig.classList.toggle("hide", f !== "all" && fig.dataset.cat !== f));
+}));
+
+/* order modal */
+const dlg = document.getElementById("orderDlg");
+const oForm = document.getElementById("oForm");
+const oStatus = document.getElementById("oStatus");
+const oSend = document.getElementById("oSend");
+function showForm(){ document.getElementById("orderForm").hidden = false; document.getElementById("orderDone").hidden = true; }
+document.querySelectorAll("[data-order]").forEach(btn => btn.addEventListener("click", () => {
+  showForm(); oStatus.textContent = ""; oStatus.className = "status";
+  if (btn.dataset.plan) document.getElementById("o-plan").value = btn.dataset.plan;
+  dlg.showModal();
+  document.getElementById("o-name").focus();
+}));
+dlg.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", () => dlg.close()));
+dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+
+oForm.addEventListener("submit", async e => {
+  e.preventDefault();
+  oStatus.className = "status";
+  const data = Object.fromEntries(new FormData(oForm).entries());
+  if (!data.name.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.email.trim()) || !data.channel.trim() || !data.details.trim()) {
+    oStatus.textContent = "Please fill in your name, a valid email, channel link and project details.";
+    oStatus.classList.add("err"); return;
+  }
+  oSend.disabled = true; oSend.textContent = "Sending...";
+  try {
+    const r = await fetch("/api/order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || !j.ok) throw new Error(j.error || "Something went wrong. Please try again.");
+    oForm.reset();
+    document.getElementById("orderForm").hidden = true;
+    document.getElementById("orderDone").hidden = false;
+  } catch (err) {
+    oStatus.textContent = err.message; oStatus.classList.add("err");
+  } finally {
+    oSend.disabled = false; oSend.textContent = "Send order";
+  }
+});
+</script>
+</body>
+</html>
