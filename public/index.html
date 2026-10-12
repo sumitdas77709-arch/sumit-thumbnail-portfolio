@@ -108,18 +108,21 @@ mark{background:var(--yellow);color:inherit;padding:0 .12em;box-decoration-break
 section{padding:76px 0}
 .head{margin-bottom:34px}
 /* Thumbnail zoom */
-document.querySelectorAll(".slot img").forEach(img => {
-  img.style.cursor = "zoom-in";
-  img.addEventListener("click", () => {
-    const overlay = document.createElement("div");
-    overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;z-index:99999;cursor:zoom-out;padding:20px;";
-    const large = document.createElement("img");
-    large.src = img.src;
-    large.style.cssText = "max-width:95%;max-height:90%;object-fit:contain;";
-    overlay.appendChild(large);
-    overlay.addEventListener("click", () => overlay.remove());
-    document.body.appendChild(overlay);
-  });
+document.addEventListener("click", function(e) {
+  const img = e.target.closest("#grid img, .grid img, figure img, .slot img");
+  if (!img) return;
+
+  const overlay = document.createElement("div");
+  overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;z-index:99999;cursor:zoom-out;padding:20px;";
+
+  const large = document.createElement("img");
+  large.src = img.src;
+  large.alt = img.alt || "Thumbnail preview";
+  large.style.cssText = "max-width:95%;max-height:90%;object-fit:contain;";
+
+  overlay.appendChild(large);
+  overlay.addEventListener("click", () => overlay.remove());
+  document.body.appendChild(overlay);
 });
 /* filters */
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
