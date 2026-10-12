@@ -429,22 +429,49 @@ function setImage(slot, src, alt){
   const img = new Image(); img.src = src; img.alt = alt; img.loading = "lazy";
   slot.prepend(img); slot.classList.add("filled");
 }
+
 document.querySelectorAll(".slot").forEach(slot => {
-  const id = slot.dataset.slot, label = slot.dataset.label || "Thumbnail";
+  const id = slot.dataset.slot;
+  const label = slot.dataset.label || "Thumbnail";
+
   const empty = document.createElement("div");
   empty.className = "empty";
   empty.innerHTML = "<b>" + label + "</b><span>Click to preview your image</span>";
   slot.appendChild(empty);
-  slot.setAttribute("role","button"); slot.tabIndex = 0;
+  slot.setAttribute("role", "button");
+  slot.tabIndex = 0;
   slot.setAttribute("aria-label", label + " thumbnail");
-  if (IMAGES[id]) setImage(slot, IMAGES[id], label + " thumbnail design by Sumit Das");
-  const pick = () => {
-    const inp = document.createElement("input"); inp.type = "file"; inp.accept = "image/*";
-    inp.onchange = () => { if (inp.files[0]) setImage(slot, URL.createObjectURL(inp.files[0]), label); };
-    inp.click();
-  };
-  
+
+  if (IMAGES[id]) {
+    setImage(slot, IMAGES[id], label + " thumbnail design by Sumit Das");
+  }
+
+  function zoomThumbnail() {
+    const img = slot.querySelector("img");
+    if (!img) return;
+
+    const overlay = document.createElement("div");
+    overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;z-index:99999;cursor:zoom-out;padding:20px;";
+
+    const large = document.createElement("img");
+    large.src = img.src;
+    large.alt = img.alt || "Thumbnail preview";
+    large.style.cssText = "max-width:95%;max-height:90%;object-fit:contain;";
+
+    overlay.appendChild(large);
+    overlay.addEventListener("click", () => overlay.remove());
+    document.body.appendChild(overlay);
+  }
+
+  slot.addEventListener("click", zoomThumbnail);
+  slot.addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      zoomThumbnail();
+    }
+  });
 });
+
 
 /* filters */
 document.querySelectorAll(".chip").forEach(chip => chip.addEventListener("click", () => {
